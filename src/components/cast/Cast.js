@@ -32,6 +32,7 @@ const Cast = () => {
                 <img
                   src={`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${profile_path}`}
                   alt={character}
+                  width={150}
                 />
 
                 <h3>{name}</h3>
