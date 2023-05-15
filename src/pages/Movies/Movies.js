@@ -1,13 +1,30 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams, Link, useLocation } from 'react-router-dom';
 import { fetchSearchMovies } from 'services/fetch';
+import SearchBox from 'components/searchBox/SearchBox';
 
 const Movies = () => {
   const [movies, setMovies] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [search, setSearch] = useState(searchParams.get('query') ?? '');
   const movieName = searchParams.get('query') ?? '';
-
   const location = useLocation();
+
+  useEffect(() => {
+    if (search === '') {
+      return;
+    } else {
+      const fetchData = async () => {
+        try {
+          const response = await fetchSearchMovies(search);
+          setMovies(response.results);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      fetchData();
+    }
+  }, [search]);
 
   const showSearchParams = e => {
     if (e.target.value === '') {
@@ -19,23 +36,20 @@ const Movies = () => {
 
   const handleOnSubmit = async e => {
     e.preventDefault();
-    const response = await fetchSearchMovies(movieName);
 
-    setMovies(response.results);
+    setSearch(movieName);
   };
+
+  const noResults =
+    movies.length === 0 && search === movieName && search !== '';
 
   return (
     <>
-      <form onSubmit={e => handleOnSubmit(e)}>
-        <input
-          type="text"
-          name="query"
-          value={movieName}
-          placeholder="Введите название"
-          onChange={e => showSearchParams(e)}
-        />
-        <button type="sumbit">Search</button>
-      </form>
+      <SearchBox
+        onSubmit={handleOnSubmit}
+        value={movieName}
+        onChange={showSearchParams}
+      />
       {movies && (
         <ul>
           {movies.map(({ title, id }) => (
@@ -47,6 +61,7 @@ const Movies = () => {
           ))}
         </ul>
       )}
+      {noResults && <p>Такого фильма нет</p>}
     </>
   );
 };
