@@ -23,7 +23,7 @@ const Reviews = () => {
   return (
     <>
       {reviews.length === 0 ? (
-        <p>Cast is unknown</p>
+        <p>Reviews is unknown</p>
       ) : (
         <ul>
           {reviews.map(({ id, author, content }) => {

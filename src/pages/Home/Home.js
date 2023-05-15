@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import fetchHome from 'services/fetch';
 import css from './Home.module.css';
@@ -8,12 +8,15 @@ const Home = () => {
 
   useEffect(() => {
     const getMovies = async () => {
-      const response = await fetchHome();
-      setMovies(response.results);
+      try {
+        const response = await fetchHome();
+        setMovies(response.results);
+      } catch (error) {
+        console.error(error);
+      }
     };
     getMovies();
   }, []);
-  console.log(movies);
 
   return (
     <div>
@@ -27,6 +30,7 @@ const Home = () => {
                 <img
                   src={`https://image.tmdb.org/t/p/w300_and_h450_bestv2/${poster_path}`}
                   alt={title}
+                  width={300}
                 ></img>
                 <ul className={css.movies__info}>
                   <p>{release_date}</p>
